@@ -2,7 +2,7 @@ name: "stormychecker"
 
 includes:
     - resource: true
-      file: "/crawler-default.yaml"
+      file: "/app/stormychecker/crawler-conf.yaml"
       override: false
 
     - resource: false
