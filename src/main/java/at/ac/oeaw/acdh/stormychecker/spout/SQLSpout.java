@@ -35,6 +35,10 @@ import org.slf4j.LoggerFactory;
 import java.sql.*;
 import java.util.Map;
 
+/**
+ * This class queries the sql database. TODO it should use RASA as a dependency instead of sending the queries by itself.
+ * Adapted for stormychecker: select sorting algorithm from the database, changed output fields, improved exception handling
+ */
 @SuppressWarnings("serial")
 public class SQLSpout extends AbstractQueryingSpout {
 

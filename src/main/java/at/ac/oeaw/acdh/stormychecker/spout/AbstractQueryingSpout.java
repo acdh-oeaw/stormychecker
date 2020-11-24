@@ -18,16 +18,11 @@ package at.ac.oeaw.acdh.stormychecker.spout;
  * NOTICE: This code was modified in ACDH - Austrian Academy of Sciences, based on Stormcrawler source code.
  */
 
-import java.time.Instant;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Queue;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicBoolean;
-
+import com.digitalpebble.stormcrawler.util.CollectionMetric;
+import com.digitalpebble.stormcrawler.util.ConfUtils;
+import com.google.common.base.Optional;
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
 import org.apache.storm.metric.api.MultiCountMetric;
 import org.apache.storm.spout.SpoutOutputCollector;
 import org.apache.storm.task.TopologyContext;
@@ -37,11 +32,10 @@ import org.apache.storm.tuple.Fields;
 import org.apache.storm.tuple.Values;
 import org.apache.storm.utils.Utils;
 
-import com.digitalpebble.stormcrawler.util.CollectionMetric;
-import com.digitalpebble.stormcrawler.util.ConfUtils;
-import com.google.common.base.Optional;
-import com.google.common.cache.Cache;
-import com.google.common.cache.CacheBuilder;
+import java.time.Instant;
+import java.util.*;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * Common features of spouts which query a backend to generate tuples. Tracks
@@ -49,7 +43,7 @@ import com.google.common.cache.CacheBuilder;
  * the cache. Throttles the rate a which queries are emitted and provides a
  * buffer to store the URLs waiting to be sent.
  *
- * @since 1.11
+ * Adapted for stormychecker: change output fields
  **/
 
 public abstract class AbstractQueryingSpout extends BaseRichSpout {

@@ -41,8 +41,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Abstract bolt used to store the status of URLs. Uses the DefaultScheduler and
- * MetadataTransfer.
+ * Abstract bolt used to store the status of URLs.
+ * Adapted to stormychecker: output fields
  **/
 @SuppressWarnings("serial")
 public abstract class AbstractStatusUpdaterBolt extends BaseRichBolt {

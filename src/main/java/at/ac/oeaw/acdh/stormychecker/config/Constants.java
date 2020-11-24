@@ -22,6 +22,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * This class loads constants from the crawler-conf.yml file
+ */
 public class Constants {
     public static final String SQL_STATUS_TABLE_PARAM_NAME = "sql.status.table";
     public static final String SQL_MAX_DOCS_BUCKET_PARAM_NAME = "sql.max.urls.per.bucket";

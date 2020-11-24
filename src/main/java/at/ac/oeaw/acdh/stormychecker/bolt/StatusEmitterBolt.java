@@ -34,6 +34,7 @@ import java.util.Map;
  * Provides common functionalities for Bolts which emit tuples to the status
  * stream, e.g. Fetchers, Parsers. Encapsulates the logic of URL filtering and
  * metadata transfer to outlinks.
+ * Adapted to stormychecker: definition of the fields
  **/
 public abstract class StatusEmitterBolt extends BaseRichBolt {
 

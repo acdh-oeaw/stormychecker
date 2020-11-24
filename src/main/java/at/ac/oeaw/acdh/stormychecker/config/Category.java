@@ -1,5 +1,8 @@
 package at.ac.oeaw.acdh.stormychecker.config;
 
+/**
+ * Possible categories for the results of link checking
+ */
 public enum Category {
     Ok,
     Broken,

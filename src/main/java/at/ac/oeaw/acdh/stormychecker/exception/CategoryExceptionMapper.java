@@ -1,6 +1,5 @@
 package at.ac.oeaw.acdh.stormychecker.exception;
 
-import at.ac.oeaw.acdh.stormychecker.bolt.FetcherBolt;
 import at.ac.oeaw.acdh.stormychecker.config.Category;
 import org.apache.http.ConnectionClosedException;
 import org.apache.http.NoHttpResponseException;
@@ -10,15 +9,22 @@ import org.slf4j.LoggerFactory;
 
 import javax.net.ssl.SSLException;
 import java.net.*;
-
-public class CategoryException{
+/**
+ * Class that helps get category from exception. TODO this class is duplicated in curation module. There is a need to have only one class and both curation module and stormychecker use it as a dependency.
+ */
+public class CategoryExceptionMapper {
     private static final org.slf4j.Logger LOG = LoggerFactory
-            .getLogger(CategoryException.class);
+            .getLogger(CategoryExceptionMapper.class);
 
-    //Different exceptions according to https://docs.google.com/spreadsheets/d/18EyqXjL5-e7tc0kpvTHQNaG5ObXr_WNIfdvrcJRiTAg/edit#gid=0
-    //the order of these is important as some of them extend others below
-    //cant do a switch case with instanceof so it is if else...
+    /**
+     * Gets category according to exception that was thrown from the request. Different exceptions according to https://docs.google.com/spreadsheets/d/18EyqXjL5-e7tc0kpvTHQNaG5ObXr_WNIfdvrcJRiTAg/edit#gid=0
+     * the order of the exceptions is important as some of them extend others below
+     * @param e exception
+     * @param url url that caused the exception, helpful for logging
+     * @return category of the exception
+     */
     public static Category getCategoryFromException(Exception e, String url) {
+        //cant do a switch case with "instanceof" (can't be done in java), so it is: if else...
         if (e instanceof MalformedURLException) {
             return Category.Broken;
         } else if (e instanceof IllegalArgumentException) {

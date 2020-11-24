@@ -46,6 +46,7 @@ import crawlercommons.domains.PaidLevelDomain;
 /**
  * Generates a partition key for a given URL based on the hostname, domain or IP
  * address.
+ * Adapted to stormychecker: key ist the hostname
  */
 public class URLPartitionerBolt extends BaseRichBolt {
 

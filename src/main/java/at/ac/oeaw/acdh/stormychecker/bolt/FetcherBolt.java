@@ -21,7 +21,7 @@ package at.ac.oeaw.acdh.stormychecker.bolt;
 import at.ac.oeaw.acdh.stormychecker.config.Category;
 import at.ac.oeaw.acdh.stormychecker.config.Configuration;
 import at.ac.oeaw.acdh.stormychecker.config.Constants;
-import at.ac.oeaw.acdh.stormychecker.exception.CategoryException;
+import at.ac.oeaw.acdh.stormychecker.exception.CategoryExceptionMapper;
 import at.ac.oeaw.acdh.stormychecker.exception.CrawlDelayTooLongException;
 import at.ac.oeaw.acdh.stormychecker.exception.DeniedByRobotsException;
 import at.ac.oeaw.acdh.stormychecker.exception.LoginPageException;
@@ -58,6 +58,8 @@ import java.util.concurrent.atomic.AtomicLong;
 /**
  * A multithreaded, queue-based fetcher adapted from Apache Nutch. Enforces the
  * politeness and handles the fetching threads itself.
+ * Adapted for the stormychecker. It separates redirects from the rest. Rest are sent forward in the stream to be persisted.
+ * Redirects are forwarded back to URLPartitionerBolt to be partitioned according to the host and fetched again.
  */
 @SuppressWarnings("serial")
 public class FetcherBolt extends StatusEmitterBolt {
@@ -662,7 +664,7 @@ public class FetcherBolt extends StatusEmitterBolt {
 
                     metadata.setValue("fetch.content-type", null);
 
-                    metadata.setValue("fetch.category", CategoryException.getCategoryFromException(e, url).name());
+                    metadata.setValue("fetch.category", CategoryExceptionMapper.getCategoryFromException(e, url).name());
 
                     metadata.setValue("fetch.message", e.getMessage());
 
@@ -851,7 +853,7 @@ public class FetcherBolt extends StatusEmitterBolt {
                 metadata = new Metadata();
             }
 
-            metadata.setValue("fetch.category", CategoryException.getCategoryFromException(e, url).name());
+            metadata.setValue("fetch.category", CategoryExceptionMapper.getCategoryFromException(e, url).name());
 
             metadata.setValue("fetch.message", e.getMessage());
 

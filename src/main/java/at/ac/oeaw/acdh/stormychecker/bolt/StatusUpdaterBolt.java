@@ -40,8 +40,9 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Status updater for SQL backend. Discovered URLs are sent as a batch, whereas
- * updates are atomic.
+ * Status updater for SQL backend. Takes care of replacing existing urls in status table and moving them into history.
+ * Also updates the urls table for next fetch date.
+ * All updates are executed in batches.
  **/
 
 @SuppressWarnings("serial")
