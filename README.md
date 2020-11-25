@@ -37,17 +37,22 @@ Stormychecker is a Storm Crawler adaptation for URL checking. Instead of crawlin
   Note: For now, it is on SNAPSHOT level because this repository containst just a very basic implementation.
   
   
-# Simple Explanation of Current Implementation
+# Architecture
 
-Our MYSQL database has 3 tables:
-1. **urls:** This is the table that stormychecker reads from. So this will be populated by another application(in our case curation-module).
+![Stormychecker architecture diagram](Stormychecker-architecture-diagram.png)
+
+Our MySQL database has 4 tables:
+1. **urls:** This is the table that stormychecker reads from. So this will be populated by 
+another application (in our case curation module).
 2. **status:** This is the table that stormychecker saves the results into.
-3. **metrics:** This table is filled by default storm-crawler behaviour in FetcherBolt and has some statistics information.
+3. **history:** This is the table where links are saved if they were checked more than one time. 
+So if a link is already in the `status` table and is checked again, then the old checked link is moved here.
+4. **metrics (Not important):** This table is filled by default storm-crawler behaviour in FetcherBolt and has some statistics information. It is not really important for stormychecker.
 
 *crawler.flux* defines our topology. It defines all the spouts, bolts and streams.
-1. `com.digitalpebble.stormcrawler.sql.SQLSpout` reads from the urls table in the database and sends it to URLPartitionerBolt. It reads only when nextfetchdate is in the future and it orders the reads based on that column.
-2. `com.digitalpebble.stormcrawler.bolt.URLPartitionerBolt` partitions the URLS to host, path, parameter etc.
-3. `FetcherBolt` fetches the urls. It sends redirects back to URLPartitionerBolt and sends the rest onwards down the stream to StatusUpdaterBolt. Modification of  `com.digitalpebble.stormcrawler.bolt.FetcherBolt`
-4. `StatusUpdaterBolt` persists the results in the status table in the database. It also persists nextfetchdate and host columns in the urls table. Modification of `com.digitalpebble.stormcrawler.sql.StatusUpdaterBolt`.
+1. **SQLSpout:** reads from the `urls` table in the database and sends the urls to the URLPartitionerBolt. Its query is sorted according to the nextfetchdate column.
+2. **URLPartitionerBolt:** partitions the URLS according to their host name.
+3. **FetcherBolt:** fetches/checks the urls (sends requests to the urls). It sends redirects back to URLPartitionerBolt and sends the rest onwards down the stream to StatusUpdaterBolt.
+4. **StatusUpdaterBolt:** persists the results in the `status` table in the database. It also persists nextfetchdate and host columns in the urls table.
 
-Note: For now streams just forward the tuples between the bolts. Parallelism is currently set to 1, so streams are not fully used to their potential right now.
+
