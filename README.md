@@ -55,4 +55,9 @@ So if a link is already in the `status` table and is checked again, then the old
 3. **FetcherBolt:** fetches/checks the urls (sends requests to the urls). It sends redirects back to URLPartitionerBolt and sends the rest onwards down the stream to StatusUpdaterBolt.
 4. **StatusUpdaterBolt:** persists the results in the `status` table in the database. It also persists nextfetchdate and host columns in the urls table.
 
+# Logging
+There are multiple logs if you deploy stormychecker in the cluster mode.
+You can look into the logs for the different programs (apache storm, apache zookeeper) in their respective folders. 
+To view the logs for the workers of the topology, you need to go into `.../{apache storm folder}/logs/workers-artifacts/stormychecker-1-.../670*/`. 
+
 
