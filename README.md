@@ -1,7 +1,7 @@
 # Stormychecker
-Stormychecker is a Storm Crawler adaptation for URL checking. Instead of crawling, it checks the status of URLs and persists them in a database (currently mysql)
+Stormychecker is a Storm Crawler adaptation for URL checking. Instead of crawling, it checks the status of URLs and persists them in a database.
 
-# How to setup and run
+# Setup and Run Local Mode
 
 0. Before you can run stormychecker, you need to install ApacheStorm: Download Apache Storm 1.2.2 (current supported version) from this link: https://archive.apache.org/dist/storm/apache-storm-1.2.2/apache-storm-1.2.2.tar.gz
 
@@ -12,31 +12,41 @@ Stormychecker is a Storm Crawler adaptation for URL checking. Instead of crawlin
 3. Run *tableCreation.sql* on your mysql database. It requires a database with the name *stormychecker*. You can change the database name and the table names in the script but then you would have to change the *crawler-conf.yaml* configuration for those parameters as well.
 
 4. Add your mysql url and login parameters to *crawler-conf.yaml* (and change any other parameters you wish, ex: http.agent):
-  ```
-  sql.connection:
-  url: {your mysql url, ex: "jdbc:mysql://localhost:3307/stormychecker"}
-  user: {your mysql username}
-  password: {your mysql password}
-  rewriteBatchedStatements: "true"
-  useBatchMultiSend: "true"
-  ```
+      ```
+      sql.connection:
+      url: {your mysql url, ex: "jdbc:mysql://localhost:3307/stormychecker"}
+      user: {your mysql username}
+      password: {your mysql password}
+      rewriteBatchedStatements: "true"
+      useBatchMultiSend: "true"
+      ```
 5. Point to your crawler-conf.yaml file in *crawler.flux*:
-  ```
-  includes:
-    - resource: true
-      file: "/crawler-default.yaml"
-      override: false
-
-    - resource: false
-      file: {path to your crawler-conf.yaml file}
-      override: true
-  ```
-  Note: If you set it "crawler-conf.yaml", then you can directly use the crawler-conf.yaml in this repository.
+      ```
+      includes:
+        - resource: true
+          file: "/crawler-default.yaml"
+          override: false
+    
+        - resource: false
+          file: {path to your crawler-conf.yaml file}
+          override: true
+      ```
+    Note: If you set it "crawler-conf.yaml", then you can directly use the crawler-conf.yaml in this repository.
 
 6. To start stormychecker on local mode, run `apache-storm-1.2.2/bin/storm jar path/to/this/repository/target/stormychecker-1.0-SNAPSHOT.jar  org.apache.storm.flux.Flux --local path/to/this/repository/crawler.flux --sleep 86400000`
-  Note: For now, it is on SNAPSHOT level because this repository containst just a very basic implementation.
   
+    Note: Local Mode has an expiration time parameter that has to be provided, which means the application will shut down after a while. To see how to run indefinitely, see below.
   
+# Setup and Run Remote Mode
+0. To run local mode, you need Apache Zookeeper and Apache Storm.
+
+1. Bulding this project is the same as explained above.
+
+2. You need to start Zookeeper and Storm. You also need to start Nimbus and Supervisor 
+(provided in Storm folder). You can see how it is done [here](https://gitlab.com/CLARIN-ERIC/docker-stormychecker/-/blob/master/image/start-cluster.sh).
+
+Note: Although it's called remote mode, it can all be run on the same server. 
+
 # Architecture
 
 ![Stormychecker architecture diagram](Stormychecker-architecture-diagram.png)
@@ -58,6 +68,10 @@ So if a link is already in the `status` table and is checked again, then the old
 # Logging
 There are multiple logs if you deploy stormychecker in the cluster mode.
 You can look into the logs for the different programs (apache storm, apache zookeeper) in their respective folders. 
-To view the logs for the workers of the topology, you need to go into `.../{apache storm folder}/logs/workers-artifacts/stormychecker-1-.../670*/`. 
+To view the logs for the workers of the topology, you need to go into `.../{apache storm folder}/logs/workers-artifacts/stormychecker-1-.../670*/`.
+
+### Build and Deployment
+The application is built as a Docker image and pushed to the Clarin Docker registry via the [docker-stormychecker](https://gitlab.com/CLARIN-ERIC/docker-stormychecker) project.
+This image is then deployed together with the Curation Module on the Clarin server via [compose_curation_module_stormychecker](https://gitlab.com/CLARIN-ERIC/compose_curation_module_stormychecker) project. 
 
 
